@@ -10,6 +10,8 @@ This Python script converts PDF documents to Excel files using Optical Character
 - Uses high-resolution (300 DPI) image processing for better accuracy
 - Includes intermediate CSV storage for data processing
 - Compatible with Python 3.x
+- User-friendly Graphical User Interface (GUI) available
+- Standalone executable available (no Python installation required)
 
 ## Prerequisites
 
@@ -32,6 +34,17 @@ sudo apt-get install tesseract-ocr
 3. Add Tesseract to your system PATH
 
 ## Installation
+
+### Option 1: Using Standalone Executable (Recommended for non-technical users)
+
+1. Download the latest release from the releases page
+2. Extract the ZIP file
+3. Run the executable:
+   - Windows: Double-click `PDF_to_Excel_Converter.exe`
+   - macOS: Double-click `PDF_to_Excel_Converter.app`
+   - Linux: Run `./PDF_to_Excel_Converter`
+
+### Option 2: Running from Source Code
 
 1. Clone this repository or download the source code
 
@@ -56,20 +69,44 @@ pip install -r requirements.txt
 
 ## Usage
 
+### Using Standalone Executable
+
+1. Double-click the executable to launch the application
+2. Click "Browse" to select your PDF file
+3. Click "Convert to Excel" to start the conversion
+4. Wait for the process to complete
+5. The Excel file will be saved in the same folder as your PDF
+
+### Running from Source Code
+
 1. Make sure your virtual environment is activated
 
-2. Run the script:
+2. Run the GUI version:
 ```bash
-python main.py
+python gui.py
 ```
 
-3. When prompted, enter the full path to your PDF file
+3. In the GUI:
+   - Click "Browse" to select your PDF file
+   - Click "Convert to Excel" to start the conversion
+   - Wait for the process to complete
+   - The Excel file will be saved in the same folder as your PDF
 
-4. The script will:
-   - Process each page of the PDF
-   - Extract text using OCR
-   - Save the text to an Excel file
-   - The output file will be named `[original_pdf_name]_output.xlsx`
+## Building the Standalone Executable
+
+If you want to build the standalone executable yourself:
+
+1. Install the requirements:
+```bash
+pip install -r requirements.txt
+```
+
+2. Run the build script:
+```bash
+python build.py
+```
+
+3. The executable will be created in the `dist` folder
 
 ## Output
 
@@ -86,6 +123,7 @@ The following Python packages are required:
 - pandas
 - openpyxl
 - Pillow
+- tkinter (usually comes with Python)
 
 ## Troubleshooting
 
@@ -101,12 +139,17 @@ The following Python packages are required:
    - Try processing smaller PDFs
    - Close other memory-intensive applications
 
+4. If the GUI doesn't start:
+   - Make sure you're running the correct Python version
+   - Verify tkinter is installed (it usually comes with Python)
+
 ## Notes
 
 - The script uses 300 DPI resolution for image processing to ensure good OCR quality
 - Processing time depends on the number of pages and their complexity
 - Large PDFs may take longer to process
 - The script creates a temporary CSV file during processing but removes it afterward
+- The GUI version is recommended for users who are not comfortable with command line interfaces
 
 ## License
 
