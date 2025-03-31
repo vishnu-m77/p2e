@@ -12,6 +12,7 @@ This Python script converts PDF documents to Excel files using Optical Character
 - Compatible with Python 3.x
 - User-friendly Graphical User Interface (GUI) available
 - Standalone executable available (no Python installation required)
+- Easy-to-use installer for Windows (automatically installs Tesseract OCR)
 
 ## Prerequisites
 
@@ -35,7 +36,17 @@ sudo apt-get install tesseract-ocr
 
 ## Installation
 
-### Option 1: Using Standalone Executable (Recommended for non-technical users)
+### Option 1: Using Windows Installer (Recommended for Windows users)
+
+1. Download the latest release from the releases page
+2. Extract the ZIP file
+3. Run `PDF_to_Excel_Converter_Installer.exe`
+4. Follow the installation wizard to:
+   - Install Tesseract OCR (if not already installed)
+   - Install the PDF to Excel Converter application
+5. A desktop shortcut will be created automatically
+
+### Option 2: Using Standalone Executable (For all platforms)
 
 1. Download the latest release from the releases page
 2. Extract the ZIP file
@@ -44,7 +55,7 @@ sudo apt-get install tesseract-ocr
    - macOS: Double-click `PDF_to_Excel_Converter.app`
    - Linux: Run `./PDF_to_Excel_Converter`
 
-### Option 2: Running from Source Code
+### Option 3: Running from Source Code
 
 1. Clone this repository or download the source code
 
@@ -69,6 +80,13 @@ pip install -r requirements.txt
 
 ## Usage
 
+### Using Windows Installer
+
+1. Run the installer
+2. Choose which components to install (Tesseract OCR and/or the application)
+3. Click "Install" and wait for the process to complete
+4. Use the desktop shortcut to launch the application
+
 ### Using Standalone Executable
 
 1. Double-click the executable to launch the application
@@ -92,21 +110,24 @@ python gui.py
    - Wait for the process to complete
    - The Excel file will be saved in the same folder as your PDF
 
-## Building the Standalone Executable
+## Building the Release Package
 
-If you want to build the standalone executable yourself:
+If you want to build the release package yourself:
 
 1. Install the requirements:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Run the build script:
+2. Run the release script:
 ```bash
-python build.py
+python create_release.py
 ```
 
-3. The executable will be created in the `dist` folder
+3. The script will:
+   - Build the main application executable
+   - Build the Windows installer (on Windows)
+   - Create a ZIP file containing all components
 
 ## Output
 
@@ -124,6 +145,8 @@ The following Python packages are required:
 - openpyxl
 - Pillow
 - tkinter (usually comes with Python)
+- pywin32 (Windows only)
+- winshell (Windows only)
 
 ## Troubleshooting
 
@@ -150,6 +173,7 @@ The following Python packages are required:
 - Large PDFs may take longer to process
 - The script creates a temporary CSV file during processing but removes it afterward
 - The GUI version is recommended for users who are not comfortable with command line interfaces
+- The Windows installer automatically handles Tesseract OCR installation
 
 ## License
 
