@@ -30,15 +30,33 @@ class PDFConverterGUI:
         title_label.grid(row=0, column=0, columnspan=2, pady=(0, 20))
         
         # File selection frame
-        file_frame = ttk.LabelFrame(main_frame, text="Select PDF File", padding="10")
+        file_frame = ttk.LabelFrame(main_frame, text="Select PDF Files", padding="10")
         file_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E), pady=(0, 20))
         
-        self.file_path = tk.StringVar()
-        self.file_entry = ttk.Entry(file_frame, textvariable=self.file_path, width=50)
-        self.file_entry.grid(row=0, column=0, padx=(0, 10))
+        # Listbox for selected files
+        self.file_listbox = tk.Listbox(file_frame, width=70, height=10)
+        self.file_listbox.grid(row=0, column=0, columnspan=2, padx=(0, 10))
         
-        browse_button = ttk.Button(file_frame, text="Browse", command=self.browse_file)
-        browse_button.grid(row=0, column=1)
+        # Scrollbar for listbox
+        scrollbar = ttk.Scrollbar(file_frame, orient="vertical", command=self.file_listbox.yview)
+        scrollbar.grid(row=0, column=2, sticky=(tk.N, tk.S))
+        self.file_listbox.configure(yscrollcommand=scrollbar.set)
+        
+        # Buttons frame
+        button_frame = ttk.Frame(file_frame)
+        button_frame.grid(row=1, column=0, columnspan=2, pady=(10, 0))
+        
+        # Add files button
+        add_button = ttk.Button(button_frame, text="Add Files", command=self.add_files)
+        add_button.grid(row=0, column=0, padx=5)
+        
+        # Remove selected button
+        remove_button = ttk.Button(button_frame, text="Remove Selected", command=self.remove_selected)
+        remove_button.grid(row=0, column=1, padx=5)
+        
+        # Clear all button
+        clear_button = ttk.Button(button_frame, text="Clear All", command=self.clear_files)
+        clear_button.grid(row=0, column=2, padx=5)
         
         # Progress frame
         progress_frame = ttk.LabelFrame(main_frame, text="Progress", padding="10")
@@ -66,10 +84,11 @@ class PDFConverterGUI:
         # Instructions
         instructions = """
         Instructions:
-        1. Click 'Browse' to select your PDF file
-        2. Click 'Convert to Excel' to start the conversion
-        3. Wait for the process to complete
-        4. The Excel file will be saved in the same folder as your PDF
+        1. Click 'Add Files' to select one or more PDF files
+        2. Use 'Remove Selected' or 'Clear All' to manage the file list
+        3. Click 'Convert to Excel' to start the conversion
+        4. Wait for the process to complete
+        5. The Excel file will contain a separate sheet for each PDF
         """
         
         instructions_label = ttk.Label(
@@ -86,13 +105,24 @@ class PDFConverterGUI:
         x = (self.root.winfo_screenwidth() // 2) - (width // 2)
         y = (self.root.winfo_screenheight() // 2) - (height // 2)
         self.root.geometry(f'{width}x{height}+{x}+{y}')
-        
-    def browse_file(self):
-        file_path = filedialog.askopenfilename(
+    
+    def add_files(self):
+        file_paths = filedialog.askopenfilenames(
             filetypes=[("PDF files", "*.pdf")]
         )
-        if file_path:
-            self.file_path.set(file_path)
+        for file_path in file_paths:
+            self.file_listbox.insert(tk.END, file_path)
+    
+    def remove_selected(self):
+        try:
+            selection = self.file_listbox.curselection()
+            for index in reversed(selection):
+                self.file_listbox.delete(index)
+        except:
+            pass
+    
+    def clear_files(self):
+        self.file_listbox.delete(0, tk.END)
     
     def update_progress(self, value, status):
         self.progress_var.set(value)
@@ -100,35 +130,31 @@ class PDFConverterGUI:
         self.root.update_idletasks()
     
     def start_conversion(self):
-        pdf_path = self.file_path.get()
+        # Get all file paths from listbox
+        pdf_paths = list(self.file_listbox.get(0, tk.END))
         
-        if not pdf_path:
-            messagebox.showerror("Error", "Please select a PDF file first!")
-            return
-        
-        if not os.path.exists(pdf_path):
-            messagebox.showerror("Error", "Selected file does not exist!")
+        if not pdf_paths:
+            messagebox.showerror("Error", "Please select at least one PDF file!")
             return
         
         # Disable the convert button
         self.convert_button.config(state='disabled')
         
         # Start conversion in a separate thread
-        thread = threading.Thread(target=self.convert_pdf, args=(pdf_path,))
+        thread = threading.Thread(target=self.convert_pdfs, args=(pdf_paths,))
         thread.daemon = True
         thread.start()
     
-    def convert_pdf(self, pdf_path):
+    def convert_pdfs(self, pdf_paths):
         try:
             # Generate output Excel path
-            pdf_name = Path(pdf_path).stem
-            output_excel_path = f"{pdf_name}_output.xlsx"
+            output_excel_path = "combined_output.xlsx"
             
             # Update status
             self.update_progress(0, "Starting conversion...")
             
             # Run the conversion
-            pdf_to_excel(pdf_path, output_excel_path)
+            pdf_to_excel(pdf_paths, output_excel_path)
             
             # Update status
             self.update_progress(100, "Conversion completed successfully!")
